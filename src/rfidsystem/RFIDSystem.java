@@ -14,8 +14,8 @@ import javax.swing.JTextField;
  * @author James
  */
 public class RFIDSystem {
-
-    private static final String Allowed = "0002104953";
+   //String of the test ID
+   // private static final String Allowed = "0002104953";
 
     /**
      * @param args the command line arguments
