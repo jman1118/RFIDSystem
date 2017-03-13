@@ -4,8 +4,10 @@
  * Copyright James Vanaselja 2017. All Rights Reserved.
  */
 package rfidsystem;
-
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -14,7 +16,7 @@ import javax.swing.JTextField;
  * @author James
  */
 public class RFIDSystem {
-
+    //hardwired tag id
     private static final String Allowed = "0002104953";
 
     /**
@@ -25,6 +27,8 @@ public class RFIDSystem {
         
         Object[] options = new String[]{"Add A Tag", "Remove A Tag", "List All IDs", "Check Tag", "Exit"};
         JTextField field = new JTextField(20);
+        
+        
         
         ArrayList list = new ArrayList();
         Object[] message = {
@@ -37,9 +41,9 @@ public class RFIDSystem {
 
             if (option == 0) {
                // System.out.println("Option: " + option);
-
+                
                 addToList(field.getText(), list);
-
+               
             } else if (option == 1) {
                // System.out.println("Option: " + option);
                 removeFromList(field.getText(), list);
@@ -62,23 +66,34 @@ public class RFIDSystem {
 
     public static void addToList(String field, ArrayList list) {
         String compare = "";
-        compare = field;
-
-        if (list.isEmpty() || !list.contains(compare)) {
+        String message = "";
+        field = sanitize(field);
+        compare = field;    
+ 
+        
+        if (field.isEmpty()){
+            Toolkit.getDefaultToolkit().beep();
+            message += "Please scan or enter a tag number";
+            JOptionPane.showMessageDialog(null, message, "Notice", 1);
+             
+        }
+        else if (list.isEmpty() || !list.contains(compare)) {
             list.add(field);
-
+            
             System.out.println(list);
         } else {
             for (int i = 0; i < list.size(); i++) {
                 System.out.println(list.get(i));
             }
         }
+        
     }
 
     public static void removeFromList(String field, ArrayList list) {
         //Removes the entered ID from the program.
         String compareTo = "";
         String message = "";
+        
         compareTo = field;
         if (list.contains(compareTo)) {
             list.remove(compareTo);
@@ -86,9 +101,11 @@ public class RFIDSystem {
             JOptionPane.showMessageDialog(null, message, "Notice", 1);
         } else if (list.isEmpty()) {
             //System.out.println("List is empty");
+             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(null, "Unable to remove item. "
                     + "List is currently empty", "Alert", 1);
         } else if (!list.contains(compareTo)) {
+             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(null, "Unable to remove item. "
                     + "List does not contain ID#" + compareTo, "Alert", 1);
             //System.out.println("List does not contain the requested item");
@@ -101,22 +118,32 @@ public class RFIDSystem {
         in the system.
         */
         String msg = "";
-
+        
         if (list.contains(field)) {
             //System.out.println("Access Allowed");
             msg += "Access Granted!";
-
+            JOptionPane.showMessageDialog(null, msg, "Notice", 1);
         } else if (list.isEmpty()) {
             msg += "Access Denied. No Tag ID entered";
             //System.out.println("List is empty!");
+             Toolkit.getDefaultToolkit().beep();
+              JOptionPane.showMessageDialog(null, msg, "Error", 1);
         } else {
             msg += "Access Denied!";
+             Toolkit.getDefaultToolkit().beep();
             //System.out.println("Access Denied");
+              JOptionPane.showMessageDialog(null, msg, "Error", 1);
         }
-        JOptionPane.showMessageDialog(null, msg, "Error", 1);
+       
 
     }
-
+    
+    private static String sanitize(String field){
+        String clean = "";
+        clean = field.replaceAll("[^\\d]","");
+        System.out.println("field: " + field + "\nclean: " + clean);
+        return clean;
+    }
     public static void printList(ArrayList list) {
         //Prints list of IDs in system.
         int counter = 0;
@@ -124,6 +151,7 @@ public class RFIDSystem {
         if(list.isEmpty()){
                 //System.out.println("Error");
             message += "List is empty";
+             Toolkit.getDefaultToolkit().beep();
             }
         
         for (Object list1 : list) {
